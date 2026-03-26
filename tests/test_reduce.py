@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from reducable_params._reduce_c import reduce as reduce_c
-from reducable_params._reduce_py import reduce as reduce_py
-from reducable_params.abc import Reducable, is_reducable
+from reductable_params._reduce_c import reduce as reduce_c
+from reductable_params._reduce_py import reduce as reduce_py
+from reductable_params.abc import Reducable, is_reducable
 
 
 @pytest.fixture(

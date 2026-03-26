@@ -1,10 +1,10 @@
-# reducable-params
+# reductable-params
 A low level Function packer & sender inspired by pluggy that is designed for mass sending
 as well as ignoring unneeded parameters before sending to a function allowing for large chainable callbacks to be possible in any configuration order.
 
 
 ```python
-from reducable_params import reduce
+from reductable_params import reduce
 
 
 def test(a: int, b: str | None = None):

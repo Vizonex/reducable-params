@@ -6,8 +6,8 @@ from timeit import repeat
 import matplotlib.pyplot as plt
 
 # from pluggy import PluginManager
-from reducable_params._reduce_c import reduce as reduce_c
-from reducable_params._reduce_py import reduce as reduce_py
+from reductable_params._reduce_c import reduce as reduce_c
+from reductable_params._reduce_py import reduce as reduce_py
 
 
 @dataclass

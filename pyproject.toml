@@ -1,5 +1,5 @@
 [project]
-name = "reducable-params"
+name = "reductable-params"
 dynamic = ["version"]
 description = "filters arbitrary paremeters before sending them off to be called"
 readme = "README.md"
@@ -15,12 +15,12 @@ dependencies = [
 requires = ["setuptools", "cython", "wheel"]
 
 [tool.setuptools.dynamic]
-version = {attr = "reducable_params.__version__"}
+version = {attr = "reductable_params.__version__"}
 
 [tool.setuptools]
 
 ext-modules = [
-{name="reducable_params._reduce_c", sources = ["src/reducable_params/_reduce_c.pyx"]}
+{name="reductable_params._reduce_c", sources = ["src/reductable_params/_reduce_c.pyx"]}
 ]
 
 [tool.ruff]
@@ -41,3 +41,8 @@ select = [
     "RUF", # Ruff-specific rules
     "W",   # pycodestyle warnings
 ]
+
+
+[project.urls]
+    repository = "https://github.com/Vizonex/reductable-params.git"
+
