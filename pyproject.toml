@@ -7,7 +7,9 @@ authors = [
     { name = "Vizonex", email = "VizonexBusiness@gmail.com" }
 ]
 requires-python = ">=3.9"
-dependencies = []
+dependencies = [
+    'typing_extensions;  python_version<"3.14"'
+]
 
 [build-system]
 requires = ["setuptools", "cython", "wheel"]
