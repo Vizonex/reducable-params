@@ -1,0 +1,41 @@
+[project]
+name = "reducable-params"
+dynamic = ["version"]
+description = "filters arbitrary paremeters before sending them off to be called"
+readme = "README.md"
+authors = [
+    { name = "Vizonex", email = "VizonexBusiness@gmail.com" }
+]
+requires-python = ">=3.9"
+dependencies = []
+
+[build-system]
+requires = ["setuptools", "cython", "wheel"]
+
+[tool.setuptools.dynamic]
+version = {attr = "reducable_params.__version__"}
+
+[tool.setuptools]
+
+ext-modules = [
+{name="reducable_params._reduce_c", sources = ["src/reducable_params/_reduce_c.pyx"]}
+]
+
+[tool.ruff]
+line-length = 79
+target-version = "py310"
+exclude = [
+    ".git",
+    ".ruff_cache",
+    ".venv",
+    ".vscode",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "RUF", # Ruff-specific rules
+    "W",   # pycodestyle warnings
+]
