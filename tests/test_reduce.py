@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import pytest
 
 from reducable_params._reduce_c import reduce as reduce_c
