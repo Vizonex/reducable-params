@@ -1,3 +1,5 @@
+# cython: freethreading_compatible = True
+
 from types import GenericAlias
 
 cimport cython
