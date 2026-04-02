@@ -18,9 +18,27 @@ from cpython.tuple cimport (
     PyTuple_New
 )
 
-from .abc import Reducable
-from .utils import varnames
+from . import abc
+from . import utils
 
+# uvloop strategy to prevent crashing.
+cdef Reducable = abc.Reducable
+cdef varnames = utils.varnames
+del abc
+del utils
+
+cdef extern from "reduce_packer.h":
+    # added incase of preformance degrades and to prevent cython
+    # from playing around with or triggering segfaults.
+    object reduce_call(
+        object kwds, 
+        object r_wrapped,
+        object r_defaults, 
+        object r_required,
+        object r_params,
+        const Py_ssize_t n_required,
+        const Py_ssize_t n_params
+    )
 
 cdef extern from "Python.h":
     object PyTuple_GetItemObj "PyTuple_GET_ITEM"(object p, Py_ssize_t pos) noexcept
@@ -29,10 +47,7 @@ cdef extern from "Python.h":
     int PyDict_SetItemPtr "PyDict_SetItem"(object p, object key, PyObject* val) except -1
     Py_ssize_t PyDict_GET_SIZE(dict p)
 
-# This should be enough callables for any decently sized application.
-DEF REDUCE_FREELIST_SIZE = 250 
 
-@cython.freelist(REDUCE_FREELIST_SIZE)
 cdef class reduce:
     cdef:
         public object __wrapped__
@@ -132,21 +147,15 @@ cdef class reduce:
         when chaining together callbacks with different function
         formations."""
 
-        cdef dict kwargs = PyDict_Copy(self._defaults)
-        cdef tuple args = PyTuple_New(self._nargs)
-        cdef PyObject* v
-        cdef Py_ssize_t k
-
-        for k, key in enumerate(self._required):
-            v = PyDict_GetItemWithError(kwds, key)
-            PyTuple_SetItemPtr(args, k, v)
-
-        for key in self._params[self._nargs:]:
-            v = PyDict_GetItem(kwds, key)
-            if v != NULL:
-                PyDict_SetItemPtr(kwargs, key, v)
-
-        return PyObject_Call(self.__wrapped__, args, kwargs)
+        return reduce_call(
+            kwds, 
+            self.__wrapped__, 
+            self._defaults,
+            self._required, 
+            self._params, 
+            self._nargs,
+            self._nparams
+        )
 
 
 Reducable.register(reduce)

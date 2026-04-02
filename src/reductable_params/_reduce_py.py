@@ -109,7 +109,7 @@ class reduce(Generic[P, T]):
         kwargs = self._defaults.copy()
         args = [kwds[key] for key in self._required]
 
-        for k in self._params[self._nargs :]:
+        for k in self._params[self._nargs:]:
             if k in kwargs:
                 kwargs[k] = kwds[k]
 
