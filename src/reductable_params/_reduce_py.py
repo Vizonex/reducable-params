@@ -86,8 +86,7 @@ class reduce(Generic[P, T]):
                 # arg present in tuple and dict
                 raise TypeError(
                     "argument for %.200s given by name ('%s') and position "
-                    "(%d)"
-                    % (self._name, k, n + 1)
+                    "(%d)" % (self._name, k, n + 1)
                 )
             output[k] = v
 
@@ -109,7 +108,7 @@ class reduce(Generic[P, T]):
         kwargs = self._defaults.copy()
         args = [kwds[key] for key in self._required]
 
-        for k in self._params[self._nargs:]:
+        for k in self._params[self._nargs :]:
             if k in kwargs:
                 kwargs[k] = kwds[k]
 
