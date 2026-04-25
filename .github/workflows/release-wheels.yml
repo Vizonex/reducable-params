@@ -41,6 +41,7 @@ jobs:
       # Upload github release to the current page.
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
+        if: github.ref_type == 'tag'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
