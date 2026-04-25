@@ -23,7 +23,7 @@ jobs:
   upload_github:
     needs: [build_wheels, build_sdist]
     # enable pre-releases to test to see if wheel uploading works or not.
-    if: github.event_name == 'release'
+    if: github.event_name == 'release' && github.ref_type == 'tag'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/download-artifact@v8
