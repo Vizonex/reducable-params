@@ -3,22 +3,18 @@
 
 #include <Python.h>
 
+#include "pythoncapi_compat.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-// Backwards comptability
-#ifndef Py_BEGIN_CRITICAL_SECTION 
-    #define Py_BEGIN_CRITICAL_SECTION(self)
-#endif
-
-#ifndef Py_END_CRITICAL_SECTION
-    #define Py_END_CRITICAL_SECTION()
-#endif
 
 /* This was more or less an optimization & Not wanting cython 
-to screw around or trigger segfaults with in the most critical sections 
-The entire reduce module could be moved to C if problems persist.
+to screw around or trigger segfaults with in the most critical sections.
+
+However there is now a push to transition to Pure C in the future.
+SEE: https://github.com/Vizonex/reductable-params/issues/15
 */
 
 /* Simillar to _PyErr_SetKeyError except it's a bit more public */
@@ -37,6 +33,8 @@ void PyErr_SetKeyError(PyObject* arg){
     Py_DECREF(exc);
 }
 
+// TODO: mark functions as *_impl implying that it's a implementation of or we could use a 
+// rd_* to imply that it's a lower level function.
 static int reduce_install_kwargs(
     PyObject* params,
     PyObject* kwargs,
@@ -44,6 +42,11 @@ static int reduce_install_kwargs(
 ){
     PyObject* key, *value;
     Py_ssize_t pos = 0;
+
+    /* Iterations of Python Dictionarys in Free-Threaded Mode 
+     * could be considered unsafe or dangerous so we use a 
+     * Py_BEGIN_CRITICAL_SECTION to protect all keyword arguments 
+     * being installed. */
 
     Py_BEGIN_CRITICAL_SECTION(kwargs);
     while (PyDict_Next(kwargs, &pos, &key, &value)){
@@ -84,14 +87,17 @@ static PyObject* reduce_call(
             PyErr_SetKeyError(key);
             goto cleanup;
         }
-        Py_INCREF(v);
-        PyTuple_SET_ITEM(args, i, v);
+        PyTuple_SET_ITEM(args, i, Py_NewRef(v));
     }
 
     for (Py_ssize_t j = n_required; j < n_params; j++){
         key = PyTuple_GET_ITEM(r_params, j);
         v = PyDict_GetItem(kwds, key);
-        if (v != NULL){
+
+        /* TODO: inline as if (v != NULL && (PyDict_SetItem(kwargs, key, v) < 0)) 
+         * could wind up being a possible improvement. */
+        
+         if (v != NULL){
             if (PyDict_SetItem(kwargs, key, v) < 0){
                 goto cleanup;
             }
